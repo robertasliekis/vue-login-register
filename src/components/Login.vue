@@ -32,7 +32,7 @@
         <a-form-item class="login-form-links">
           <a-row :style="{ margin: '0px' }"
             >Please login here or
-            <span>
+            <span @click="editSelectedMenuButton">
               <router-link to="/register" class="link"> create a new account</router-link>
             </span>
           </a-row>
@@ -116,6 +116,7 @@ export default {
               if (values.email === user.email && values.password === user.password) {
                 this.$store.dispatch("changeLoggedInUserId", user.id);
                 this.$store.dispatch("changeLoginState", true);
+                this.$store.dispatch("editSelectedMenuButton");
               }
             });
             if (this.checkLogin) {
@@ -127,6 +128,10 @@ export default {
         }
       });
     },
+    editSelectedMenuButton() {
+      this.$store.dispatch("editSelectedMenuButton");
+    },
+
     showModal() {
       this.visible = true;
     },

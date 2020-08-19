@@ -35,7 +35,9 @@ export default {
       formLayout: "horizontal",
       form: this.$form.createForm(this, { name: "coordinated" }),
       confirmDirty: false,
-      autoCompleteResult: []
+      autoCompleteResult: [],
+      emailExist: false,
+      userPassword: ""
     };
   },
   computed: {
@@ -63,15 +65,19 @@ export default {
         if (!err) {
           users.forEach((user) => {
             if (values.email === user.email) {
-              this.passwordReminder(user.password);
+              this.emailExist = true;
+              this.userPassword = user.password;
             }
           });
+          if (this.emailExist) {
+            this.passwordReminder("Your password is: " + this.userPassword);
+          } else this.passwordReminder("User does not exist");
         }
       });
     },
-    passwordReminder(password) {
+    passwordReminder(message) {
       this.$info({
-        content: "Your password is: " + password
+        content: message
       });
     }
   }

@@ -7,9 +7,9 @@
           <div class="logo-text">LinkCalc</div>
         </router-link>
 
-        <a-menu theme="light" mode="horizontal" :default-selected-keys="['2']" :style="{ lineHeight: '64px' }">
+        <a-menu theme="light" mode="horizontal" @click="editSelectedMenuButton" :default-selected-keys="[selectedMenuButton]" :selected-keys="[selectedMenuButton]" :style="{ lineHeight: '64px' }">
           <a-menu-item key="1">
-            <router-link to="/contact" @click="menuItemClicked" v-model="picked" class="btn btn-contact">Contact</router-link>
+            <router-link to="/contact" v-model="picked" class="btn btn-contact">Contact</router-link>
           </a-menu-item>
           <a-menu-item key="2">
             <router-link to="/register" class="btn btn-register">Register</router-link>
@@ -59,11 +59,14 @@ export default {
   },
   methods: {
     menuItemClicked() {
-      console.log(this.picked);
+      console.log(this.picked.class);
     },
     logOut() {
       this.$store.dispatch("changeLoginState", false);
       router.push({ name: "login" });
+    },
+    editSelectedMenuButton() {
+      this.$store.dispatch("editSelectedMenuButton");
     }
   }
 };

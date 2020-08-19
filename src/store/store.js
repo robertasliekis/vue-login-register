@@ -59,6 +59,25 @@ export default new Vuex.Store({
     },
     changeLoggedInUserId(state, userId) {
       state.loggedInUserId = userId;
+    },
+    editSelectedMenuButton(state) {
+      const url = window.location.pathname;
+      var menuButton;
+      switch (url) {
+        case "/":
+          menuButton = 3;
+          break;
+        case "/register":
+          menuButton = 2;
+          break;
+        case "/userpage":
+          menuButton = 4;
+          break;
+        case "/contact":
+          menuButton = 1;
+          break;
+      }
+      state.selectedMenuButton = menuButton;
     }
   },
 
@@ -71,6 +90,9 @@ export default new Vuex.Store({
     },
     changeLoggedInUserId(context, loginState) {
       context.commit("changeLoggedInUserId", loginState);
+    },
+    editSelectedMenuButton(context) {
+      context.commit("editSelectedMenuButton");
     }
   }
 });

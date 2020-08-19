@@ -97,7 +97,7 @@
           </a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item v-bind="formItemLayout" label="Select your language" :style="{ margin: '0px auto' }">
+      <a-form-item v-bind="formItemLayout" label="Select your language">
         <a-select placeholder="Please select your language" v-decorator="['language', { rules: [{ required: true, message: 'Please select a map type!' }] }]">
           <a-select-option value="english">
             English (United States)
@@ -143,6 +143,7 @@
           </a-button>
         </a-form-item>
       </a-row>
+      
     </a-form>
     <!-- <div v-for="user in users" :key="user.email">{{ user.id }} {{ user.email }} {{ user.email }} {{ user.password }}</div> -->
   </div>
