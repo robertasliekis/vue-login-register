@@ -5,6 +5,7 @@ import Contact from "@/components/Contact";
 import Login from "@/components/Login";
 import UserPage from "@/components/UserPage";
 import Reminder from "@/components/Reminder";
+import WrongPage from "@/components/WrongPage";
 
 Vue.use(Router);
 
@@ -36,6 +37,11 @@ export default new Router({
       name: "reminder",
       path: "/reminder",
       component: Reminder
+    },
+    {
+      name: "wrongPage",
+      path: "*",
+      component: WrongPage
     }
   ]
 });

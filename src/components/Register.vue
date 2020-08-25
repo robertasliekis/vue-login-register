@@ -1,7 +1,8 @@
 <template>
-  <div class="register-container" :style="{ width: '1000px', marginTop: '50px' }">
-    <a-form :form="form" @submit="handleSubmit">
-      <a-form-item class="input-form" v-bind="formItemLayout" label="E-mail" justify="center" :style="{}" has-feedback>
+  <a-row class="register-container" :style="{ width: '700px', margin: '50px 0' }">
+    <a-form :form="form" @submit="handleSubmit" class="register-form form-style">
+      <h2 :style="{ marginBottom: '20px' }">REGISTER</h2>
+      <a-form-item class="input-form " v-bind="formItemLayout" label="E-mail" justify="center" :style="{}" has-feedback>
         <a-input
           v-decorator="[
             'email',
@@ -18,61 +19,74 @@
               ]
             }
           ]"
+          placeholder="Email"
         />
       </a-form-item>
-      <a-form-item v-bind="formItemLayout" label="Password" has-feedback>
+      <a-form-item class="input-form " v-bind="formItemLayout" :style="{ position: 'relative' }" label="Password">
         <a-input
           v-decorator="[
             'password',
             {
               rules: [
-                {
-                  required: true,
-                  message: 'Please input your password!'
-                },
+                { required: true, message: 'Please input your Password!' },
+                ,
                 {
                   validator: validateToNextPassword
                 }
               ]
             }
           ]"
-          type="password"
-        />
+          :type="passwordFieldType"
+          placeholder="Password"
+        >
+        </a-input>
+        <div :style="{ position: 'absolute', transform: 'translate(-50%,-50%)', right: '0px', top: '50%', fontSize: '16px', cursor: 'pointer' }" class="show-password" @click="showPassword">
+          <a-icon type="eye" v-if="passwordFieldType == 'password'" /> <a-icon v-else type="eye-invisible" />
+        </div>
       </a-form-item>
-      <a-form-item v-bind="formItemLayout" label="Confirm Password" has-feedback>
+      <a-form-item class="input-form " v-bind="formItemLayout" :style="{ position: 'relative' }" label="Confirm password">
         <a-input
           v-decorator="[
             'confirm',
             {
               rules: [
-                {
-                  required: true,
-                  message: 'Please confirm your password!'
-                },
+                { required: true, message: 'Please input your Password!' },
+                ,
                 {
                   validator: compareToFirstPassword
                 }
               ]
             }
           ]"
-          type="password"
-          @blur="handleConfirmBlur"
-        />
+          :type="passwordFieldType"
+          placeholder="Password"
+        >
+        </a-input>
+        <div :style="{ position: 'absolute', transform: 'translate(-50%,-50%)', right: '0px', top: '50%', fontSize: '16px', cursor: 'pointer' }" class="show-password" @click="showPassword">
+          <a-icon type="eye" v-if="passwordFieldType == 'password'" /> <a-icon v-else type="eye-invisible" />
+        </div>
       </a-form-item>
-      <a-form-item class="input-form" v-bind="formItemLayout" label="First Name">
-        <a-input v-decorator="['firstName']" />
+
+      <a-form-item class="input-form" v-bind="formItemLayout" label="First name">
+        <a-input v-decorator="['firstName']" placeholder="First name" />
       </a-form-item>
-      <a-form-item class="input-form" v-bind="formItemLayout" label="Last Name">
-        <a-input v-decorator="['lastName']" />
+      <a-form-item class="input-form" v-bind="formItemLayout" label="Last name">
+        <a-input v-decorator="['lastName']" placeholder="Last name" />
       </a-form-item>
       <a-form-item class="input-form" v-bind="formItemLayout" label="Company">
-        <a-input v-decorator="['company']" />
+        <a-input v-decorator="['company']" placeholder="Company" />
       </a-form-item>
       <a-form-item class="input-form" v-bind="formItemLayout" label="Phone">
-        <a-input v-decorator="['phone']" />
+        <a-input v-decorator="['phone']" placeholder="Phone" />
       </a-form-item>
-      <a-form-item v-bind="formItemLayout" label="Country">
-        <a-select v-decorator="['country', { rules: [{ required: true, message: 'Please select your country!' }] }]" placeholder="Please select your country">
+      <a-form-item class="input-form " v-bind="formItemLayout" label="Country">
+        <a-select
+          v-decorator="['country', { rules: [{ required: true, message: 'Please select your country!' }] }]"
+          show-search
+          option-filter-prop="children"
+          :filter-option="filterOption"
+          placeholder="Select your country"
+        >
           <a-select-option value="usa">
             United States
           </a-select-option>
@@ -84,8 +98,14 @@
           </a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item v-bind="formItemLayout" label="Map type">
-        <a-select placeholder="Please select a map type" v-decorator="['mapType', { rules: [{ required: true, message: 'Please select a map type!' }] }]">
+      <a-form-item class="input-form" v-bind="formItemLayout" label="Map type">
+        <a-select
+          placeholder="Select a map type"
+          v-decorator="['mapType', { rules: [{ required: true, message: 'Please select a map type!' }] }]"
+          show-search
+          option-filter-prop="children"
+          :filter-option="filterOption"
+        >
           <a-select-option value="google">
             Google
           </a-select-option>
@@ -97,8 +117,14 @@
           </a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item v-bind="formItemLayout" label="Select your language">
-        <a-select placeholder="Please select your language" v-decorator="['language', { rules: [{ required: true, message: 'Please select a map type!' }] }]">
+      <a-form-item class="input-form" v-bind="formItemLayout" label="Language">
+        <a-select
+          placeholder="Select your language"
+          v-decorator="['language', { rules: [{ required: true, message: 'Please select a map type!' }] }]"
+          show-search
+          option-filter-prop="children"
+          :filter-option="filterOption"
+        >
           <a-select-option value="english">
             English (United States)
           </a-select-option>
@@ -110,20 +136,23 @@
           </a-select-option>
         </a-select>
       </a-form-item>
+      <a-form-item class="input-form" v-bind="formItemLayout" label="Units">
+        <a-select
+          placeholder="Select units"
+          v-decorator="['units', { rules: [{ required: true, message: 'Please select units!' }] }]"
+          show-search
+          option-filter-prop="children"
+          :filter-option="filterOption"
+        >
+          <a-select-option value="metric">
+            Metric
+          </a-select-option>
+          <a-select-option value="imperial">
+            Imperial
+          </a-select-option>
+        </a-select>
+      </a-form-item>
       <a-row>
-        <a-form-item :style="{ margin: '0px auto' }">
-          <a-checkbox
-            v-decorator="[
-              'unit-system',
-              {
-                valuePropName: 'checked',
-                initialValue: true
-              }
-            ]"
-          >
-          </a-checkbox>
-          Metric
-        </a-form-item>
         <a-form-item :style="{ margin: '0px auto', height: '60px' }">
           <a-checkbox
             v-decorator="[
@@ -137,84 +166,55 @@
           </a-checkbox>
           I agree to the LigoWave <a a href="https://www.ligowave.com/terms-and-conditions/" to="/register" class="link">terms and conditions</a>
         </a-form-item>
-        <a-form-item>
+        <a-form-item :style="{ margin: '0px ' }">
           <a-button type="primary" html-type="submit">
             Register
           </a-button>
         </a-form-item>
       </a-row>
-      
     </a-form>
-    <!-- <div v-for="user in users" :key="user.email">{{ user.id }} {{ user.email }} {{ user.email }} {{ user.password }}</div> -->
-  </div>
+  </a-row>
 </template>
 
 <script>
 export default {
   data() {
     return {
-      email: "",
-      password: "",
       formLayout: "horizontal",
       form: this.$form.createForm(this, { name: "coordinated" }),
       confirmDirty: false,
-      autoCompleteResult: [],
-      userExist: false
+      userExist: false,
+      passwordFieldType: "password"
     };
   },
   computed: {
     users() {
       return this.$store.state.usersArray;
     },
+    //Formating form fields
     formItemLayout() {
       const { formLayout } = this;
       return formLayout === "horizontal"
         ? {
             labelCol: { span: 6 },
-            wrapperCol: { span: 12 }
-          }
-        : {};
-    },
-    buttonItemLayout() {
-      const { formLayout } = this;
-      return formLayout === "horizontal"
-        ? {
-            wrapperCol: { span: 14, offset: 4 }
+            wrapperCol: { span: 16 }
           }
         : {};
     }
   },
-  beforeCreate() {
-    this.form = this.$form.createForm(this, { name: "register" });
-  },
   methods: {
+    //Receiving register form input and checking for errors
     handleSubmit(e) {
       e.preventDefault();
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
           const form = this.form;
+          //Checking if user agrees to terms and conditions
           if (form.getFieldValue("agree-to-terms")) {
-            this.$store.state.usersArray.forEach((user) => {
-              if (values.email === user.email) {
-                this.userExist = true;
-              }
-            });
+            this.checkIfUserAlreadyExist(values.email);
+            //Display modal popup if user created successfully or if user already exist
             if (!this.userExist) {
-              const userId = new Date().getTime();
-              const newUser = {
-                id: userId,
-                email: values.email,
-                password: values.password,
-                firstName: values.firstName,
-                lastName: values.lastName,
-                company: values.company,
-                phone: values.phone,
-                country: values.country,
-                mapType: values.mapType,
-                language: values.language
-              };
-              this.$store.dispatch("addNewUser", newUser);
-              this.userCreated();
+              this.createNewUser(values);
             } else {
               this.userAlreadyExist();
               this.userExist = false;
@@ -223,9 +223,32 @@ export default {
         }
       });
     },
-    handleConfirmBlur(e) {
-      const value = e.target.value;
-      this.confirmDirty = this.confirmDirty || !!value;
+    //Checking if there is a registered user with same email
+    checkIfUserAlreadyExist(newUserEmail) {
+      this.$store.state.usersArray.forEach((user) => {
+        if (newUserEmail === user.email) {
+          this.userExist = true;
+        }
+      });
+    },
+
+    //Creates new user and adds to users array
+    createNewUser(values) {
+      const userId = new Date().getTime();
+      const newUser = {
+        id: userId,
+        email: values.email,
+        password: values.password,
+        firstName: values.firstName,
+        lastName: values.lastName,
+        company: values.company,
+        phone: values.phone,
+        country: values.country,
+        mapType: values.mapType,
+        language: values.language
+      };
+      this.$store.dispatch("addNewUser", newUser);
+      this.userCreated();
     },
     compareToFirstPassword(rule, value, callback) {
       const form = this.form;
@@ -242,23 +265,21 @@ export default {
       }
       callback();
     },
-    handleWebsiteChange(value) {
-      let autoCompleteResult;
-      if (!value) {
-        autoCompleteResult = [];
-      } else {
-        autoCompleteResult = [".com", ".org", ".net"].map((domain) => `${value}${domain}`);
-      }
-      this.autoCompleteResult = autoCompleteResult;
+    //Displays/hides text in password input area
+    showPassword() {
+      this.passwordFieldType = this.passwordFieldType === "password" ? "text" : "password";
     },
-    handleChange(value) {
-      console.log(`selected ${value}`);
+    //Searching option in drop down input field
+    filterOption(input, option) {
+      return option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0;
     },
+    //Modal pop up when new user is registered
     userCreated() {
       this.$info({
         content: "New user registered!"
       });
     },
+    //Modal pop up when user with same email already exists
     userAlreadyExist() {
       this.$error({
         content: "User with this email already exists!"
@@ -267,15 +288,4 @@ export default {
   }
 };
 </script>
-
-<style>
-.register-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.register-form .form-group label {
-  width: 8rem;
-}
-</style>
+<style></style>

@@ -41,6 +41,7 @@ export default {
     };
   },
   computed: {
+    //Formating form fields
     formItemLayout() {
       const { formLayout } = this;
       return formLayout === "horizontal"
@@ -54,27 +55,31 @@ export default {
       return this.$store.state.usersArray;
     }
   },
-  beforeCreate() {
-    this.form = this.$form.createForm(this, { name: "register" });
-  },
   methods: {
+    //Receiving reminder form input and checking for errors
     handleSubmit(e) {
       e.preventDefault();
       const users = this.users;
       this.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
-          users.forEach((user) => {
-            if (values.email === user.email) {
-              this.emailExist = true;
-              this.userPassword = user.password;
-            }
-          });
-          if (this.emailExist) {
-            this.passwordReminder("Your password is: " + this.userPassword);
-          } else this.passwordReminder("User does not exist");
+          this.checkIfUserExist(users, values);
         }
       });
     },
+    //Checking if user with input email exist
+    checkIfUserExist(users, values) {
+      users.forEach((user) => {
+        if (values.email === user.email) {
+          this.emailExist = true;
+          this.userPassword = user.password;
+        }
+      });
+      //User receives message about his password
+      if (this.emailExist) {
+        this.passwordReminder("Your password is: " + this.userPassword);
+      } else this.passwordReminder("User does not exist");
+    },
+    //Modal popup for displaying info about user's password
     passwordReminder(message) {
       this.$info({
         content: message

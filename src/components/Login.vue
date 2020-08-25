@@ -1,8 +1,10 @@
 <template>
-  <a-row :style="{ height: 'calc(100vh - 66px)' }" type="flex" align="middle">
+  <a-row :style="{ height: 'calc(100vh - 70px)' }" type="flex" align="middle">
     <a-layout-content class="main-layout">
-      <a-form id="components-form-login" :form="form" class="login-form" @submit="handleSubmit">
-        <a-form-item class="input-container" :style="{ width: '300px' }">
+      <a-form id="components-form-login" :form="form" class="login-form form-style" @submit="handleSubmit" :layout="formLayout">
+        <h2 :style="{ marginBottom: '20px' }">USER LOGIN</h2>
+
+        <a-form-item :style="{ width: '500px' }" label="E-mail" v-bind="formItemLayout">
           <a-input
             v-decorator="[
               'email',
@@ -24,24 +26,15 @@
             <a-icon slot="prefix" type="user" style="color: rgba(0,0,0,.25)" />
           </a-input>
         </a-form-item>
-        <a-form-item :style="{ width: '300px' }">
-          <a-input v-decorator="['password', { rules: [{ required: true, message: 'Please input your Password!' }] }]" type="password" placeholder="Password">
+        <a-form-item :style="{ width: '500px', position: 'relative' }" label="Password" v-bind="formItemLayout">
+          <a-input v-decorator="['password', { rules: [{ required: true, message: 'Please input your Password!' }] }]" :type="passwordFieldType" placeholder="Password">
             <a-icon slot="prefix" type="lock" style="color: rgba(0,0,0,.25)" />
           </a-input>
+          <div :style="{ position: 'absolute', transform: 'translate(-50%,-50%)', right: 0, top: '50%', fontSize: '16px', cursor: 'pointer' }" class="show-password" @click="showPassword">
+            <a-icon type="eye" v-if="passwordFieldType == 'password'" /> <a-icon v-else type="eye-invisible" />
+          </div>
         </a-form-item>
-        <a-form-item class="login-form-links">
-          <a-row :style="{ margin: '0px' }"
-            >Please login here or
-            <span @click="editSelectedMenuButton">
-              <router-link to="/register" class="link"> create a new account</router-link>
-            </span>
-          </a-row>
-          <a-row :style="{ margin: '0px' }"
-            >Forgot password?
-            <span>
-              <router-link to="/reminder" class="link"> Click here</router-link>
-            </span>
-          </a-row>
+        <a-form-item class="login-form-links" :style="{ margin: '0px' }">
           <a-form-item :style="{ margin: '0px auto', height: '60px' }">
             <a-checkbox
               v-decorator="[
@@ -56,17 +49,25 @@
             I agree to the LigoWave <a href="https://www.ligowave.com/terms-and-conditions/" to="/register" class="link">terms and conditions</a>
           </a-form-item>
 
-          <a-button type="primary" html-type="submit" class="login-form-button" :style="{ width: '300px' }">
-            Log in
-          </a-button>
-          <a-row :style="{ marginTop: '50px' }"
-            >By using this free tool you understand and agree that you will be receiving e-mails from LigoWave, Deliberant and their authorized channel partners.</a-row
-          >
+          <a-row type="flex" justify="center">
+            <a-col :span="14">
+              <a-button type="primary" html-type="submit" class="login-form-button" :style="{ marginBottom: '20px' }">
+                Log in
+              </a-button>
+            </a-col>
+          </a-row>
+
+          <a-row :style="{ margin: '0px' }" type="flex" justify="center">
+            <a-col @click="editSelectedMenuButton" :span="7" :style="{ textAlign: 'start' }">
+              <router-link to="/register" class="link"> Register</router-link>
+            </a-col>
+            <a-col :span="7" :style="{ textAlign: 'end' }">
+              <router-link to="/reminder" class="link"> Forgot password</router-link>
+            </a-col>
+          </a-row>
         </a-form-item>
       </a-form>
     </a-layout-content>
-
-    <!-- <div v-for="user in users" :key="user.email">{{ user.id }} {{ user.email }} {{ user.password }}</div> -->
   </a-row>
 </template>
 
@@ -76,11 +77,10 @@ import router from "../router/index.js";
 export default {
   data: function() {
     return {
-      message: "",
-      email: "",
-      password: "",
       loggedIn: false,
-      visible: false
+      visible: false,
+      formLayout: "horizontal",
+      passwordFieldType: "password"
     };
   },
   beforeCreate() {
@@ -94,24 +94,27 @@ export default {
     checkLogin() {
       return this.$store.state.isLoggedIn;
     },
-    LoggedInUserInfo: function() {
-      return this.users.filter(function(user) {
-        if (user.id === 1) {
-          return user;
-        }
-      });
-    },
-    checkLoginUserId() {
-      return this.$store.state.loggedInUserId;
+    //Formating form fields
+    formItemLayout() {
+      const { formLayout } = this;
+      return formLayout === "horizontal"
+        ? {
+            labelCol: { span: 5 },
+            wrapperCol: { span: 14 }
+          }
+        : {};
     }
   },
   methods: {
+    //Receiving login form input and checking for errors
     handleSubmit(e) {
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
           const form = this.form;
+          //Checking if user agrees to terms and conditions
           if (form.getFieldValue("agree-to-terms")) {
+            //Checking if user's email and password are valid
             this.$store.state.usersArray.forEach((user) => {
               if (values.email === user.email && values.password === user.password) {
                 this.$store.dispatch("changeLoggedInUserId", user.id);
@@ -119,6 +122,7 @@ export default {
                 this.$store.dispatch("editSelectedMenuButton");
               }
             });
+            //If login is successful user will be redirected to user page, else receive error message
             if (this.checkLogin) {
               router.push({ name: "userpage" });
             } else {
@@ -128,10 +132,14 @@ export default {
         }
       });
     },
+    //Displays/hides text in password input area
+    showPassword() {
+      this.passwordFieldType = this.passwordFieldType === "password" ? "text" : "password";
+    },
+    //Changes highlighted menu button in navbar
     editSelectedMenuButton() {
       this.$store.dispatch("editSelectedMenuButton");
     },
-
     showModal() {
       this.visible = true;
     },
@@ -150,10 +158,12 @@ export default {
   color: orange;
   margin-left: 0.3rem;
 }
-.login-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+
+.form-style {
+  border: 1px solid rgb(223, 223, 223);
+  background-color: rgb(252, 252, 252);
+  border-radius: 20px;
+  padding: 40px 60px !important;
 }
 
 .btn-login {

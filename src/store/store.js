@@ -47,9 +47,6 @@ export default new Vuex.Store({
     isLoggedIn: false,
     loggedInUserId: null
   },
-
-  getters: {},
-
   mutations: {
     addNewUser(state, user) {
       state.usersArray.push(user);
@@ -60,6 +57,7 @@ export default new Vuex.Store({
     changeLoggedInUserId(state, userId) {
       state.loggedInUserId = userId;
     },
+    //Changes highlighted menu button in navbar, depending on current url
     editSelectedMenuButton(state) {
       const url = window.location.pathname;
       var menuButton;
@@ -71,11 +69,13 @@ export default new Vuex.Store({
           menuButton = 2;
           break;
         case "/userpage":
-          menuButton = 4;
+          menuButton = 5;
           break;
         case "/contact":
           menuButton = 1;
           break;
+        default:
+          menuButton = "";
       }
       state.selectedMenuButton = menuButton;
     }

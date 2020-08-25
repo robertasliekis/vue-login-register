@@ -9,30 +9,21 @@
 
         <a-menu theme="light" mode="horizontal" @click="editSelectedMenuButton" :default-selected-keys="[selectedMenuButton]" :selected-keys="[selectedMenuButton]" :style="{ lineHeight: '64px' }">
           <a-menu-item key="1">
-            <router-link to="/contact" v-model="picked" class="btn btn-contact">Contact</router-link>
+            <router-link to="/contact" class="btn btn-contact">Contact</router-link>
           </a-menu-item>
-          <a-menu-item key="2">
+          <a-menu-item key="2" v-if="checkLogin == false">
             <router-link to="/register" class="btn btn-register">Register</router-link>
           </a-menu-item>
-          <a-menu-item key="3">
-            <router-link to="/" class="">Login</router-link>
-          </a-menu-item>
-          <a-menu-item key="4">
+          <a-menu-item key="5" v-if="checkLogin == true">
             <router-link to="/userpage" class="">User</router-link>
           </a-menu-item>
+          <a-menu-item key="3" v-if="checkLogin == false">
+            <router-link to="/" class="">Login</router-link>
+          </a-menu-item>
+          <a-menu-item key="4" v-else @click="logOut">
+            Log Out
+          </a-menu-item>
         </a-menu>
-        <div :style="{ paddingLeft: '60px' }">
-          <div v-if="checkLogin == true">
-            <a-button type="primary" @click="logOut">
-              Log Out
-            </a-button>
-          </div>
-          <div v-else>
-            <a-button type="primary" disabled>
-              Log Out
-            </a-button>
-          </div>
-        </div>
       </a-row>
     </a-layout>
     <router-view />
@@ -43,13 +34,8 @@
 import router from "./router/index.js";
 
 export default {
-  data() {
-    return {
-      picked: ""
-    };
-  },
-
   computed: {
+    //Return highlighted menu button in navbar
     selectedMenuButton() {
       return this.$store.state.selectedMenuButton.toString();
     },
@@ -58,16 +44,31 @@ export default {
     }
   },
   methods: {
-    menuItemClicked() {
-      console.log(this.picked.class);
-    },
     logOut() {
       this.$store.dispatch("changeLoginState", false);
       router.push({ name: "login" });
     },
+    //Changes highlighted menu button in navbar
     editSelectedMenuButton() {
       this.$store.dispatch("editSelectedMenuButton");
     }
+  },
+  mounted: function() {
+    const checkLogin = this.checkLogin;
+    this.$nextTick(function() {
+      const url = window.location.pathname;
+      //Redirects user to login page if user is not logged and tries to access user info page
+      if (url === "/userpage" && checkLogin === false) {
+        router.push({ name: "login" });
+        //Redirects user to login page if user is logged and tries to password reminder page
+      } else this.editSelectedMenuButton();
+      if (url === "/reminder" && checkLogin === true) {
+        router.push({ name: "login" });
+      }
+    });
+  },
+  updated: function() {
+    this.editSelectedMenuButton();
   }
 };
 </script>
@@ -82,8 +83,9 @@ export default {
   text-align: center;
 }
 .header {
-  padding: 0 1rem;
-  /* background-color: rgb(35, 35, 63); */
+  padding-left: 16px;
+  background-color: rgb(252, 252, 252);
+  border-bottom: 1px solid rgb(223, 223, 223);
 }
 .logo-container {
   display: flex;

@@ -1,6 +1,8 @@
 <template>
-  <div class="main-container" :style="{ marginTop: '50px', width: '500px' }">
-    <a-row type="flex" class="" :style="{ marginBottom: '20px' }">
+  <a-row class="contact-form form-style" :style="{ margin: '50px 0', width: '700px' }">
+    <h2 :style="{ marginBottom: '20px' }">CONTACTS</h2>
+
+    <a-row type="flex" class="" :style="{ marginBottom: '20px' }" style="flex" justify="center">
       <a-col class="column" :span="12" align="start">
         <a-row :style="{ fontWeight: 'bold' }">USA</a-row>
         <a-row>LigoWave</a-row>
@@ -35,10 +37,24 @@
       </a-col>
     </a-row>
     <a-form :form="form" @submit="handleSubmit">
-      <a-form-item class="input-form" v-bind="formItemLayout">
-        <a-input class="input-field" placeholder="Name" />
+      <a-form-item class="input-form" v-bind="formItemLayout" label="Name">
+        <a-input
+          class="input-field"
+          placeholder="Name"
+          v-decorator="[
+            'name',
+            {
+              rules: [
+                {
+                  required: true,
+                  message: 'Please input your name'
+                }
+              ]
+            }
+          ]"
+        />
       </a-form-item>
-      <a-form-item class="input-form" v-bind="formItemLayout" justify="center">
+      <a-form-item class="input-form" v-bind="formItemLayout" justify="center" label="Email">
         <a-input
           placeholder="Email"
           v-decorator="[
@@ -58,16 +74,31 @@
           ]"
         />
       </a-form-item>
-      <a-form-model-item>
-        <a-input v-model="form.desc" type="textarea" placeholder="Message" :style="{ height: '200px' }" />
-      </a-form-model-item>
-      <a-form-item>
+      <a-form-item label="Message" v-bind="formItemLayout">
+        <a-input
+          type="textarea"
+          placeholder="Message"
+          :style="{ height: '180px' }"
+          v-decorator="[
+            'message',
+            {
+              rules: [
+                {
+                  required: true,
+                  message: 'Please input your message'
+                }
+              ]
+            }
+          ]"
+        />
+      </a-form-item>
+      <a-form-item :style="{ margin: '0px' }">
         <a-button type="primary" html-type="submit">
           Submit
         </a-button>
       </a-form-item>
     </a-form>
-  </div>
+  </a-row>
 </template>
 
 <script>
@@ -81,28 +112,19 @@ export default {
     };
   },
   computed: {
-    users() {
-      return this.$store.state.usersArray;
-    },
+    //Formating form fields
     formItemLayout() {
       const { formLayout } = this;
       return formLayout === "horizontal"
         ? {
-            labelCol: { span: 4 },
-            wrapperCol: { span: 24 }
-          }
-        : {};
-    },
-    buttonItemLayout() {
-      const { formLayout } = this;
-      return formLayout === "horizontal"
-        ? {
-            wrapperCol: { span: 14, offset: 4 }
+            labelCol: { span: 3 },
+            wrapperCol: { span: 21 }
           }
         : {};
     }
   },
   methods: {
+    //Receiving form input and checking for errors
     handleSubmit(e) {
       e.preventDefault();
       this.form.validateFields((err, values) => {
@@ -111,7 +133,6 @@ export default {
         }
       });
     },
-
     handleFormLayoutChange(e) {
       this.formLayout = e.target.value;
     }

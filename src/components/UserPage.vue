@@ -1,8 +1,8 @@
 <template>
-  <div v-if="checkLogin == true" :style="{ marginTop: '50px', width: '50%' }">
-    <h2 v-for="user in LoggedInUserInfo" :key="user.id">User {{ user.email }} is logged in</h2>
+  <div class="form-style" v-if="checkLogin == true" :style="{ marginTop: '50px', width: '50%' }">
+    <h2 :style="{ marginBottom: '20px' }" v-for="user in LoggedInUserInfo" :key="user.id">User {{ user.email }} is logged in</h2>
     <a-descriptions bordered v-for="user in LoggedInUserInfo" :key="user.email">
-      <a-descriptions-item label="Email" :span="3">
+      <a-descriptions-item label="Email" :span="3" v-bind="formItemLayout">
         {{ user.email }}
       </a-descriptions-item>
       <a-descriptions-item label="Password" :span="3">
@@ -31,13 +31,15 @@
       </a-descriptions-item>
     </a-descriptions>
   </div>
-  <div v-else :style="{ marginTop: '80px' }">
-    <h2>You need to log in to see user info</h2>
-  </div>
 </template>
 
 <script>
 export default {
+  data: function() {
+    return {
+      formLayout: "horizontal"
+    };
+  },
   computed: {
     users() {
       return this.$store.state.usersArray;
@@ -48,6 +50,7 @@ export default {
     checkLoginUserId() {
       return this.$store.state.loggedInUserId;
     },
+    //Recieves logged in user info
     LoggedInUserInfo: function() {
       const loggedInUserId = this.checkLoginUserId;
       return this.users.filter(function(user) {
@@ -55,6 +58,16 @@ export default {
           return user;
         }
       });
+    },
+    //Formating form fields
+    formItemLayout() {
+      const { formLayout } = this;
+      return formLayout === "horizontal"
+        ? {
+            labelCol: { span: 3 },
+            wrapperCol: { span: 21 }
+          }
+        : {};
     }
   }
 };
